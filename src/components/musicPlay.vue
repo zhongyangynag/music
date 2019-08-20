@@ -231,6 +231,7 @@
         storageName:'aplayer-setting',
         audio:[],
       });
+      ap.list.show()
       // console.log(this.$route.query.id)
       // 先把所有的歌曲ID拿到
       // let id=this.$route.query.id;
@@ -257,35 +258,22 @@
             theme: '#ebd0c2',
             musicId:val.id
           }))
-          console.log(musicList)
-          this.musicData=musicList
-          ap.list.add(musicList);
+          // console.log(musicList)
+          this.musicData=musicList;
+          ap.list.add(res.data.data.songs.map(val=>({
+            name:val.name,
+            artist:val.ar[0].name,
+            url:"https://v1.itooi.cn/netease/url?id="+val.id+"&quality=flac",
+            cover:val.al.picUrl,
+            lrc:"https://v1.itooi.cn/netease/lrc?id="+val.id,
+            time: sec_to_time(val.dt),
+            theme: '#ebd0c2',
+            musicId:val.id
+          })));
         }
       });
       // ap.list.hide()
-      ap.on('loadeddata', function () {
-        var txt=ap.audio.src;
-        var re1='.*?';	// Non-greedy match on filler
-        var re2='(\\d+)';	// Integer Number 1
 
-        var p = new RegExp(re1+re2,["i"]);
-        var m = p.exec(txt);
-        if (m != null)
-        {
-          var int1=m[1];
-          console.log(int1);
-          $.ajax({
-            async: false,
-            type : "get",
-            url :'/music/netease/song?key=579621905&id='+int1,
-            dataType : 'json',
-            success : function(data) {
-              // console.log(data)
-              th.music= data.data.pic
-            }
-          });
-        }
-      });
       ap.on('play', function () {
         th.$refs.playBtn.classList.remove("icon-bofang");
         th.$refs.playBtn.classList.add("icon-zanting1");
