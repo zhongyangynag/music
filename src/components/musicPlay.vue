@@ -7,9 +7,9 @@
       <el-row>
         <el-col :span="17" >
           <el-row class="btn">
-         <button @click="collect" class="iconfont icon-xin"> 收藏</button>
-           <button @click="Delete" class="iconfont icon-shanchu"> 删除</button>
-           <button @click="clearAll" class="iconfont icon-qingkong"> 清空列表</button>
+         <!--<button @click="collect" class="iconfont icon-xin"> 收藏</button>-->
+           <!--<button @click="Delete" class="iconfont icon-shanchu"> 删除</button>-->
+           <!--<button @click="clearAll" class="iconfont icon-qingkong"> 清空列表</button>-->
           </el-row>
           <el-table
             ref="multipleTable"
@@ -23,18 +23,18 @@
             :row-style="getRowClass" :header-row-style="getHeaderClass" :header-cell-style="getRowClass"
           >
             <el-table-column
-              type="selection"
-            >
-            </el-table-column>
-            <el-table-column
               prop="name"
               label="歌曲"
             >
             </el-table-column>
             <el-table-column
-              prop="artist"
               label="歌手"
             >
+              <template slot-scope="scope">
+                <div slot="reference" class="name-wrapper">
+                  <span v-for="(item,index) in scope.row.artist"><span v-if="index>0?true:false">/</span>{{item.name}}</span>
+                </div>
+              </template>
             </el-table-column>
             <el-table-column
               prop="time"
@@ -120,6 +120,7 @@
         return "background:white;opacity: 0.5;border: 0.1px solid #fff";
       },
       rowClick(row){
+        console.log(row)
         ap.list.switch(row.index);
         ap.play()
       },
@@ -127,76 +128,76 @@
         this.collectMusic=row
         // console.log(row)
       },
-      collect(){
-        // var da=JSON.parse(JSON.stringify(this.collectMusic));
-        for(var i=0;i<this.collectMusic.length;i++){
-          // console.log(this.collectMusic[i])
-          let txt=this.collectMusic[i].url;
-          let re1='.*?';	// Non-greedy match on filler
-          var re2='(\\d+)';	// Integer Number 1
-
-          let p = new RegExp(re1+re2,["i"]);
-          let m = p.exec(txt);
-          if (m != null)
-          {
-            let int=m[1];
-            let storage=window.localStorage;
-            let MusicList=storage.getItem("musicCollect");
-            let MusicListObj=JSON.parse(MusicList);
-            if(MusicListObj){
-              if(MusicListObj.musicIdCollect.indexOf(int)==-1){
-                MusicListObj.musicIdCollect.unshift(int);
-              }else {
-                MusicListObj.musicIdCollect.splice(MusicListObj.musicIdCollect.indexOf(int),1);
-                MusicListObj.musicIdCollect.unshift(int);
-              }
-              let MusicIdObj=JSON.stringify(MusicListObj);
-              storage.setItem("musicCollect",MusicIdObj);
-            }else {
-              let MusicDataCollect={
-                musicIdCollect:[]
-              };
-              MusicDataCollect.musicIdCollect.unshift(int);
-              let musicIdList=JSON.stringify(MusicDataCollect);
-              storage.setItem("musicCollect",musicIdList);
-            }
-          }
-        }
-      },
-      Delete(){
-        let deleteMusicList=[];
-        for(let val of this.collectMusic) {
-          deleteMusicList.push(val.index);
-          // console.log(val.index)
-        }
-        deleteMusicList.sort((a,b)=>{
-          return b-a
-        });
-        let storage=window.localStorage;
-        let isMusicId=storage.getItem("musicId");
-        let isMusicIdObj=JSON.parse(isMusicId);
-        console.log(deleteMusicList);
-        for(let v of deleteMusicList) {
-          isMusicIdObj.musicId.splice(v,1);
-          this.musicData.splice(v, 1);
-          ap.list.remove(v);
-        }
-
-        let MusicIdObj=JSON.stringify(isMusicIdObj);
-        storage.setItem("musicId",MusicIdObj);
-      },
-      clearAll(){
-        let storage=window.localStorage;
-        let isMusicId=storage.getItem("musicId");
-        let isMusicIdObj=JSON.parse(isMusicId);
-
-        isMusicIdObj.musicId=[];
-        this.musicData=[];
-        ap.list.clear();
-        let MusicIdObj=JSON.stringify(isMusicIdObj);
-        storage.setItem("musicId",MusicIdObj);
-
-      },
+      // collect(){
+      //   // var da=JSON.parse(JSON.stringify(this.collectMusic));
+      //   for(var i=0;i<this.collectMusic.length;i++){
+      //     // console.log(this.collectMusic[i])
+      //     let txt=this.collectMusic[i].url;
+      //     let re1='.*?';	// Non-greedy match on filler
+      //     var re2='(\\d+)';	// Integer Number 1
+      //
+      //     let p = new RegExp(re1+re2,["i"]);
+      //     let m = p.exec(txt);
+      //     if (m != null)
+      //     {
+      //       let int=m[1];
+      //       let storage=window.localStorage;
+      //       let MusicList=storage.getItem("musicCollect");
+      //       let MusicListObj=JSON.parse(MusicList);
+      //       if(MusicListObj){
+      //         if(MusicListObj.musicIdCollect.indexOf(int)==-1){
+      //           MusicListObj.musicIdCollect.unshift(int);
+      //         }else {
+      //           MusicListObj.musicIdCollect.splice(MusicListObj.musicIdCollect.indexOf(int),1);
+      //           MusicListObj.musicIdCollect.unshift(int);
+      //         }
+      //         let MusicIdObj=JSON.stringify(MusicListObj);
+      //         storage.setItem("musicCollect",MusicIdObj);
+      //       }else {
+      //         let MusicDataCollect={
+      //           musicIdCollect:[]
+      //         };
+      //         MusicDataCollect.musicIdCollect.unshift(int);
+      //         let musicIdList=JSON.stringify(MusicDataCollect);
+      //         storage.setItem("musicCollect",musicIdList);
+      //       }
+      //     }
+      //   }
+      // },
+      // Delete(){
+      //   let deleteMusicList=[];
+      //   for(let val of this.collectMusic) {
+      //     deleteMusicList.push(val.index);
+      //     // console.log(val.index)
+      //   }
+      //   deleteMusicList.sort((a,b)=>{
+      //     return b-a
+      //   });
+      //   let storage=window.localStorage;
+      //   let isMusicId=storage.getItem("musicId");
+      //   let isMusicIdObj=JSON.parse(isMusicId);
+      //   console.log(deleteMusicList);
+      //   for(let v of deleteMusicList) {
+      //     isMusicIdObj.musicId.splice(v,1);
+      //     this.musicData.splice(v, 1);
+      //     ap.list.remove(v);
+      //   }
+      //
+      //   let MusicIdObj=JSON.stringify(isMusicIdObj);
+      //   storage.setItem("musicId",MusicIdObj);
+      // },
+      // clearAll(){
+      //   let storage=window.localStorage;
+      //   let isMusicId=storage.getItem("musicId");
+      //   let isMusicIdObj=JSON.parse(isMusicId);
+      //
+      //   isMusicIdObj.musicId=[];
+      //   this.musicData=[];
+      //   ap.list.clear();
+      //   let MusicIdObj=JSON.stringify(isMusicIdObj);
+      //   storage.setItem("musicId",MusicIdObj);
+      //
+      // },
       PrePlay(){
         ap.skipBack()
       },
@@ -216,7 +217,6 @@
     //  **************
     },
     mounted() {
-      // loadlive2d("live2d", "static/live2d/model/Violet/14.json");
       ap = new APlayer({
         container: document.getElementById('aplayer'),
         autoplay: true,
@@ -247,18 +247,21 @@
         let result = res.data.code;
         if(result === 200){
           console.log(res)
-          // let MData={
-          //     name:data.data.name,
-          //     artist:data.data.singer,
-          //     url:data.data.url,
-          //     cover:data.data.pic,
-          //     lrc:data.data.lrc,
-          //     time: sec_to_time(data.data.time),
-          //     theme: '#ebd0c2'
-          // };
+          let musicList=res.data.data.songs.map(val=>({
+            name:val.name,
+            artist:val.ar,
+            url:"https://v1.itooi.cn/netease/url?id="+val.id+"&quality=flac",
+            cover:val.al.picUrl,
+            lrc:"https://v1.itooi.cn/netease/lrc?id="+val.id,
+            time: sec_to_time(val.dt),
+            theme: '#ebd0c2',
+            musicId:val.id
+          }))
+          console.log(musicList)
+          this.musicData=musicList
+          ap.list.add(musicList);
         }
       });
-      console.log(muList)
       // ap.list.hide()
       ap.on('loadeddata', function () {
         var txt=ap.audio.src;
@@ -270,7 +273,7 @@
         if (m != null)
         {
           var int1=m[1];
-          // console.log(int1);
+          console.log(int1);
           $.ajax({
             async: false,
             type : "get",
@@ -328,7 +331,7 @@
   }
   .test{
     width: 100%;
-    position: absolute;
+    /*position: absolute;*/
     top: 35px;
     left: 0;
   }
